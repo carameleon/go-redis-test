@@ -7,4 +7,5 @@ require (
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.6.1
+	github.com/tendermint/tendermint v0.32.10
 )

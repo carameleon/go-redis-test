@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/carameleon/go-redis-test/cache"
 	"github.com/carameleon/go-redis-test/client"
@@ -13,7 +14,6 @@ import (
 var do chan int
 var done chan int
 
-//https://rpc.cluster-galaxynet.iov.one/
 func main() {
 
 	do = make(chan int)
@@ -27,13 +27,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	type ctxKey string
-
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, ctxKey("cli"), cli)
+	ctx = context.WithValue(ctx, "cli", cli)
 
-	go cache.GetStatus(ctx, 50)
+	time.Sleep(time.Second)
+
 	go cache.SetStatus(ctx, do)
+	go cache.GetStatus(ctx, 50)
 	go cache.Timer(do, 5)
 
 	<-done
