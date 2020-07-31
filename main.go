@@ -16,7 +16,6 @@ var done chan int
 
 func main() {
 
-	do = make(chan int)
 	done = make(chan int)
 
 	cfg := config.ParseConfig()
@@ -30,11 +29,33 @@ func main() {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, "cli", cli)
 
-	time.Sleep(time.Second)
+	cache.FlushAll(ctx)
+	go cache.PushBlockInfo(ctx)
 
-	go cache.SetStatus(ctx, do)
-	go cache.GetStatus(ctx, 50)
-	go cache.Timer(do, 5)
+	for i := 0; i < 1; i++ {
+		go func() {
+			for {
+				// fmt.Println("====================================================================================================")
+				result, err := cache.PopBlockInfo(ctx)
+				if err != nil {
+					fmt.Println(err)
+				}
+				resultPrint(result)
+				time.Sleep(10 * time.Millisecond)
+				// time.Sleep(1 * time.Second)
+				// repond(rw, result)
+			}
+		}()
+	}
 
 	<-done
+}
+
+func resultPrint(result []*cache.BlockInfo) {
+	return
+	str := "result:"
+	for _, b := range result {
+		str = fmt.Sprintf("%s %d", str, b.Height)
+	}
+	fmt.Println(str)
 }
