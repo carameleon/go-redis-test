@@ -30,6 +30,7 @@ func main() {
 	ctx = context.WithValue(ctx, "cli", cli)
 
 	cache.FlushAll(ctx)
+	go cache.SetExpiredCache(ctx)
 	go cache.PushBlockInfo(ctx)
 
 	for i := 0; i < 1; i++ {
